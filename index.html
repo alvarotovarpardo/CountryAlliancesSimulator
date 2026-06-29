@@ -11,6 +11,14 @@
     <body>
         <div class="container">
             <h1>Country Alliances Simulator</h1>
+            <p>Based on Ising model proposed by S. Galam for country alliances (Chapter IV of <a href="https://arxiv.org/abs/0803.1800v1" target="_blank">this paper</a>)</p>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="countryName" placeholder="Add country name (e.g., Spain)">
+            <button onclick="addCountry()">Add Country </button>
+            <button onclick="randomizeMatrix()">Generate random alliances (G factor)</button>
+            <button onclick="uniformMatrix()">Generate uniform alliances (G_ij = G)</button>
         </div>
         
         <script src="js/script.js" async defer></script>
