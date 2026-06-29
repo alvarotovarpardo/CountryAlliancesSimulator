@@ -4,14 +4,7 @@ let currentStates = [];
 
 function addCountry()
 {
-    const input = document.getElementById("countryName");
-    let countryName = input.value.trim();
-    if (countries.includes(countryName)) {
-        alert("Country already exists!");
-        return;
-    } else if (countryName === "") {
-        countryName = 'A' + (countries.length + 1);
-    }
+    const countryName = 'A' + (countries.length + 1);
     countries.push(countryName);
     currentStates.push(1); // init state
     
@@ -21,7 +14,29 @@ function addCountry()
     for (let i = 0; i < newSize - 1; i++) {
         G[i].push(0);
     }
-    input.value = "";
+    updateMatrix();
+    drawGraph();
+}
+
+function renameCountry(index)
+{
+    const current = countries[index];
+    const nextName = prompt("Enter new name for " + current, current);
+    if(nextName == null) return;
+
+    const newName = nextName.trim();
+    if(!newName){
+        alert("Name cannot be empty.");
+        return;
+    }
+
+    const duplicated = countries.some((c, i) => i !== index && c.toLowerCase() === newName.toLowerCase());
+    if(duplicated){
+        alert("Name already exists.");
+        return;
+    }
+
+    countries[index] = newName;
     updateMatrix();
     drawGraph();
 }
@@ -30,18 +45,18 @@ function updateMatrix() {
     const container = document.getElementById("matrixContainer");
     
     if (countries.length < 2) {
-        container.innerHTML = "<p>Añade al menos dos países para configurar las relaciones.</p>";
+        container.innerHTML = "<p>Add at least 2 countries to configure alliance relations.</p>";
         return;
     }
 
-    let html = "<table><tr><th>País</th>";
+    let html = "<table><tr><th>Country</th>";
     for (let i = 0; i < countries.length; i++) {
-        html += `<th>${countries[i]}</th>`;
+        html += `<th class="editable-country" onclick="renameCountry(${i})" title="Click to rename">${countries[i]}</th>`;
     }
     html += "</tr>";
 
     for (let i = 0; i < countries.length; i++) {
-        html += `<tr><th>${countries[i]}</th>`;
+        html += `<tr><th class="editable-country" onclick="renameCountry(${i})" title="Click to rename">${countries[i]}</th>`;
         for (let j = 0; j < countries.length; j++) {
             if (i === j) {
                 html += `<td class="diagonal-cell">-</td>`;
