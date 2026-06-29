@@ -1,5 +1,6 @@
 let countries = [];
 let G = [];
+let currentStates = [];
 
 function addCountry()
 {
@@ -12,6 +13,7 @@ function addCountry()
         countryName = 'A' + (countries.length + 1);
     }
     countries.push(countryName);
+    currentStates.push(1); // init state
     
     const newSize = countries.length;
     let newRow = new Array(newSize).fill(0);
@@ -21,6 +23,7 @@ function addCountry()
     }
     input.value = "";
     updateMatrix();
+    drawGraph();
 }
 
 function updateMatrix() {
@@ -53,6 +56,13 @@ function updateMatrix() {
     container.innerHTML = html;
 }
 
+function updateG(i, j, value){
+    const val = Number(value) || 0;
+    G[i][j] = val;
+    G[j][i] = val;
+    drawGraph();
+}
+
 function randomizeMatrix() {
     if (countries.length < 2) {
         alert("Add at least 2 countries.");
@@ -67,6 +77,7 @@ function randomizeMatrix() {
         }
     }
     updateMatrix();
+    drawGraph();
 }
 
 function uniformMatrix() {
@@ -82,8 +93,88 @@ function uniformMatrix() {
         }
     }
     updateMatrix();
+    drawGraph();
 }
 
+// Graph section
+function drawGraph() {
+    const svg = document.getElementById("edgesSvg");
+    const nodesDiv = document.getElementById("nodesDiv");
+
+    svg.innerHTML = "";
+    nodesDiv.innerHTML = "";
+
+    const n = countries.length
+    if(n < 1) return;
+
+    const cX = 200;
+    const cY = 200;
+    const r = 140;
+    // node positions
+    const positions = [];
+    for (let i = 0; i < n; i++) {
+        const angle = (2 * Math.PI * i) / n;
+        const x = cX + r * Math.cos(angle);
+        const y = cY + r * Math.sin(angle);
+        positions.push({ x, y });
+    }
+
+    // interconecting lines
+    for(let i = 0; i < n; i++) {
+        for(let j = i + 1; j < n; j++) {
+            if(G[i][j] !== 0) {
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", positions[i].x);
+                line.setAttribute("y1", positions[i].y);
+                line.setAttribute("x2", positions[j].x);
+                line.setAttribute("y2", positions[j].y);
+                line.setAttribute("stroke", G[i][j] > 0 ? "green" : "red");
+                line.setAttribute("stroke-width", Math.abs(G[i][j]));
+                svg.appendChild(line);
+
+                if(G[i][j] > 0) {
+                    line.setAttribute("stroke", "#2ecc71"); // green -> cooperation
+                    line.setAttribute("stroke-width", Math.min(G[i][j], 5)); // width proportional to strength alliance
+                } else {
+                    line.setAttribute("stroke-dasharray", "#e74c3c"); // red -> conflict
+                    line.setAttribute("stroke-width", Math.min(-G[i][j], 5)); // width proportional to strength conflict
+                }
+                svg.appendChild(line);
+            }
+        }
+    }
+
+    for(let i = 0; i < n; i++) {
+        const node = document.createElement("div");
+        node.className = `node ${currentStates[i] === 1 ? 'state-1' : 'state-minus1'}`;
+        node.style.left = `${positions[i].x}px`;
+        node.style.top = `${positions[i].y}px`;
+        node.textContent = countries[i].substring(0, 3).toUpperCase(); 
+        node.title = countries[i];
+
+        node.onclick = () => toggleCountryState(i);
+        nodesDiv.appendChild(node);
+    }
+    calculateCurrentCost();
+}
+
+function toggleCountryState(index) {
+    currentStates[index] *= -1;
+    drawGraph(); 
+}
+
+function calculateCurrentCost() {
+    const n = countries.length;
+    let cost = 0;
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            cost += -G[i][j] * currentStates[i] * currentStates[j];
+        }
+    }
+    document.getElementById("currentCostDisplay").textContent = cost;
+}
+
+// Optimization section
 function calculateOptimal() {
     const n = countries.length;
     if (n < 2) {
@@ -143,3 +234,4 @@ function displayResults(cost, states) {
 
     resultsArea.style.display = "block";
 }
+
