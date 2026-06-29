@@ -19,6 +19,7 @@
             <button onclick="addCountry()">Add Country </button>
             <button onclick="randomizeMatrix()">Generate random alliances (G factor)</button>
             <button onclick="uniformMatrix()">Generate uniform alliances (|G<sub>ij</sub>| = G)</button>
+            <button onclick="calculateOptimal()">Calculate optimal alliances</button>
         </div>
 
         <h2>Alliance Matrix (G<sub>i,j</sub>)</h2>
@@ -26,6 +27,21 @@
             <p>Add at least 2 countries to configure geopolitical relations.</p>
         </div>
         
+        <div id="resultsContainer" class="results">
+            <h2>Optimal result</h2>
+            <p id="costOutput"><strong>Minimum total cost: </strong>0</p>
+            <div id="allianceContainer">
+                <div class="allianceBox">
+                    <h3 class="alliance-a-title">Alliance A (State +1)</h3>
+                    <ul id="allianceA"></ul>
+                </div>
+                <div class="allianceBox">
+                    <h3 class="alliance-b-title">Alliance B (State -1)</h3>
+                    <ul id="allianceB"></ul>
+                </div>
+            </div>
+        </div>
+
         <script src="js/script.js" async defer></script>
     </body>
 </html>

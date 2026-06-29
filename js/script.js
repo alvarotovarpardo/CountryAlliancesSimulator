@@ -4,7 +4,7 @@ let G = [];
 function addCountry()
 {
     const input = document.getElementById("countryName");
-    const countryName = input.value.trim();
+    let countryName = input.value.trim();
     if (countries.includes(countryName)) {
         alert("Country already exists!");
         return;
@@ -82,4 +82,64 @@ function uniformMatrix() {
         }
     }
     updateMatrix();
+}
+
+function calculateOptimal() {
+    const n = countries.length;
+    if (n < 2) {
+        alert("Add at least 2 countries to calculate.");
+        return;
+    }
+
+    let minCost = Infinity;
+    let bestStates = [];
+
+    // Evaluate over 2^n configurations based on bit iteration
+    const totalConfigs = 1 << n;
+    for (let mask = 0; mask < totalConfigs; mask++) {
+        let states = [];
+        for (let i = 0; i < n; i++) {
+            // assign +1 or -1 depending on bit in mask
+            states.push((mask & (1 << i)) ? 1 : -1);
+        }
+
+        let currentCost = 0;
+        // H = - SUM(G_ij * S_i * S_j)
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                currentCost += -G[i][j] * states[i] * states[j];
+            }
+        }
+
+        if (currentCost < minCost) {
+            minCost = currentCost;
+            bestStates = [...states];
+        }
+    }
+
+    displayResults(minCost, bestStates);
+}
+
+function displayResults(cost, states) {
+    const resultsArea = document.getElementById("resultsContainer");
+    const listA = document.getElementById("allianceA");
+    const listB = document.getElementById("allianceB");
+    const costOutput = document.getElementById("costOutput");
+
+    listA.innerHTML = "";
+    listB.innerHTML = "";
+    
+    costOutput.innerHTML = `<strong>Minimum total cost:</strong> ${cost}`;
+
+    for (let i = 0; i < countries.length; i++) {
+        const li = document.createElement("li");
+        li.textContent = countries[i];
+        if (states[i] === 1) {
+            listA.appendChild(li);
+        } else {
+            listB.appendChild(li);
+        }
+    }
+
+    resultsArea.style.display = "block";
 }
