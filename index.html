@@ -18,7 +18,12 @@
             <input type="text" id="countryName" placeholder="Add country name (e.g., Spain)">
             <button onclick="addCountry()">Add Country </button>
             <button onclick="randomizeMatrix()">Generate random alliances (G factor)</button>
-            <button onclick="uniformMatrix()">Generate uniform alliances (G_ij = G)</button>
+            <button onclick="uniformMatrix()">Generate uniform alliances (|G<sub>ij</sub>| = G)</button>
+        </div>
+
+        <h2>Alliance Matrix (G<sub>i,j</sub>)</h2>
+        <div id="matrixContainer">
+            <p>Add at least 2 countries to configure geopolitical relations.</p>
         </div>
         
         <script src="js/script.js" async defer></script>

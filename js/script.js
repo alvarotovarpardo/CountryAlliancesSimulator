@@ -22,3 +22,64 @@ function addCountry()
     input.value = "";
     updateMatrix();
 }
+
+function updateMatrix() {
+    const container = document.getElementById("matrixContainer");
+    
+    if (countries.length < 2) {
+        container.innerHTML = "<p>Añade al menos dos países para configurar las relaciones.</p>";
+        return;
+    }
+
+    let html = "<table><tr><th>País</th>";
+    for (let i = 0; i < countries.length; i++) {
+        html += `<th>${countries[i]}</th>`;
+    }
+    html += "</tr>";
+
+    for (let i = 0; i < countries.length; i++) {
+        html += `<tr><th>${countries[i]}</th>`;
+        for (let j = 0; j < countries.length; j++) {
+            if (i === j) {
+                html += `<td class="diagonal-cell">-</td>`;
+            } else {
+                html += `<td><input type="number" value="${G[i][j]}" 
+                             onchange="updateG(${i}, ${j}, this.value)"></td>`;
+            }
+        }
+        html += "</tr>";
+    }
+    html += "</table>";
+    container.innerHTML = html;
+}
+
+function randomizeMatrix() {
+    if (countries.length < 2) {
+        alert("Add at least 2 countries.");
+        return;
+    }
+    
+    for (let i = 0; i < countries.length; i++) {
+        for (let j = i + 1; j < countries.length; j++) {
+            let val = Math.floor(Math.random() * 11) - 5; //rand between -5 and 5   
+            G[i][j] = val;
+            G[j][i] = val;
+        }
+    }
+    updateMatrix();
+}
+
+function uniformMatrix() {
+    if (countries.length < 2) {
+        alert("Add at least 2 countries.");
+        return;
+    }
+    
+    for (let i = 0; i < countries.length; i++) {
+        for (let j = i + 1; j < countries.length; j++) {
+            G[i][j] = 1;
+            G[j][i] = 1;
+        }
+    }
+    updateMatrix();
+}
