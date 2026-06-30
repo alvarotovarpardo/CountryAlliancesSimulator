@@ -60,8 +60,10 @@ function updateMatrix() {
         for (let j = 0; j < countries.length; j++) {
             if (i === j) {
                 html += `<td class="diagonal-cell">-</td>`;
+            } else if (i > j) {
+                html += `<td><input id="g-${i}-${j}" class="matrix-locked" type="number" value="${G[i][j]}" disabled></td>`;
             } else {
-                html += `<td><input type="number" value="${G[i][j]}" 
+                html += `<td><input id="g-${i}-${j}" type="number" value="${G[i][j]}" 
                              onchange="updateG(${i}, ${j}, this.value)"></td>`;
             }
         }
@@ -72,9 +74,19 @@ function updateMatrix() {
 }
 
 function updateG(i, j, value){
+    if (i > j) {
+        [i, j] = [j, i];
+    }
+
     const val = Number(value) || 0;
     G[i][j] = val;
     G[j][i] = val;
+
+    const mirrorInput = document.getElementById(`g-${j}-${i}`);
+    if (mirrorInput) {
+        mirrorInput.value = val;
+    }
+
     drawGraph();
 }
 
