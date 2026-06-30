@@ -245,10 +245,14 @@ function calculateOptimal() {
 }
 
 function displayResults(cost, states) {
-    const resultsArea = document.getElementById("resultsContainer");
+    const resultsArea = document.getElementById("resultsArea");
     const listA = document.getElementById("allianceA");
     const listB = document.getElementById("allianceB");
     const costOutput = document.getElementById("costOutput");
+
+    if (!resultsArea || !listA || !listB || !costOutput) {
+        return;
+    }
 
     listA.innerHTML = "";
     listB.innerHTML = "";
