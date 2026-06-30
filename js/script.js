@@ -61,9 +61,9 @@ function updateMatrix() {
             if (i === j) {
                 html += `<td class="diagonal-cell">-</td>`;
             } else if (i > j) {
-                html += `<td><input id="g-${i}-${j}" class="matrix-locked" type="number" value="${G[i][j]}" disabled></td>`;
+                html += `<td><input id="g-${i}-${j}" class="matrix-locked" type="number" min="-5" max="5" value="${G[i][j]}" disabled></td>`;
             } else {
-                html += `<td><input id="g-${i}-${j}" type="number" value="${G[i][j]}" 
+                html += `<td><input id="g-${i}-${j}" type="number" min="-5" max="5" value="${G[i][j]}" 
                              onchange="updateG(${i}, ${j}, this.value)"></td>`;
             }
         }
@@ -78,9 +78,15 @@ function updateG(i, j, value){
         [i, j] = [j, i];
     }
 
-    const val = Number(value) || 0;
+    const parsed = Number(value);
+    const val = Number.isFinite(parsed) ? Math.max(-5, Math.min(5, parsed)) : 0;
     G[i][j] = val;
     G[j][i] = val;
+
+    const editedInput = document.getElementById(`g-${i}-${j}`);
+    if (editedInput) {
+        editedInput.value = val;
+    }
 
     const mirrorInput = document.getElementById(`g-${j}-${i}`);
     if (mirrorInput) {
