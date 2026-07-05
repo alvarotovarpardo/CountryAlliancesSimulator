@@ -104,7 +104,7 @@ function randomizeMatrix() {
     
     for (let i = 0; i < countries.length; i++) {
         for (let j = i + 1; j < countries.length; j++) {
-            let val = Math.floor(Math.random() * 11) - 5; //rand between -2 and 2   
+            let val = Math.floor(Math.random() * 11) - 2; //rand between -2 and 2   
             G[i][j] = val;
             G[j][i] = val;
         }
