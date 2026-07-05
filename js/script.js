@@ -131,8 +131,18 @@ function uniformMatrix() {
 
 // Graph section
 function drawGraph() {
-    const svg = document.getElementById("edgesSvg");
-    const nodesDiv = document.getElementById("nodesDiv");
+    drawSingleGraph("edgesSvg", "nodesDiv", currentStates, true);
+}
+
+function drawOptimalGraph(optimalStates) {
+    drawSingleGraph("optimalEdgesSvg", "optimalNodesDiv", optimalStates, false);
+}
+
+function drawSingleGraph(svgId, nodesDivId, states, interactive) {
+    const svg = document.getElementById(svgId);
+    const nodesDiv = document.getElementById(nodesDivId);
+
+    if(!svg || !nodesDiv) return;
 
     svg.innerHTML = "";
     nodesDiv.innerHTML = "";
@@ -140,9 +150,15 @@ function drawGraph() {
     const n = countries.length
     if(n < 1) return;
 
-    const cX = 200;
-    const cY = 200;
-    const r = 140;
+    const width = svg.parentElement.clientWidth || 400;
+    const height = svg.parentElement.clientHeight || 400;
+    
+    const cX = width / 2;
+    const cY = height / 2;
+
+    const r = Math.min(cX, cY) - 40; 
+    const nodeSize = interactive ? 50 : 35; 
+
     // node positions
     const positions = [];
     for (let i = 0; i < n; i++) {
@@ -179,16 +195,30 @@ function drawGraph() {
 
     for(let i = 0; i < n; i++) {
         const node = document.createElement("div");
-        node.className = `node ${currentStates[i] === 1 ? 'state-1' : 'state-minus1'}`;
+        node.className = `node ${states[i] === 1 ? 'state-1' : 'state-minus1'}`;
         node.style.left = `${positions[i].x}px`;
         node.style.top = `${positions[i].y}px`;
+        
+        if(!interactive) {
+            node.style.width = `${nodeSize}px`;
+            node.style.height = `${nodeSize}px`;
+            node.style.fontSize = "10px";
+        }
+        
         node.textContent = countries[i].substring(0, 3).toUpperCase(); 
         node.title = countries[i];
 
-        node.onclick = () => toggleCountryState(i);
+        if(interactive) {
+            node.onclick = () => toggleCountryState(i);
+        } else {
+            node.style.cursor = "default";
+        }
         nodesDiv.appendChild(node);
     }
-    calculateCurrentCost();
+    
+    if(interactive) {
+        calculateCurrentCost();
+    }
 }
 
 function toggleCountryState(index) {
@@ -242,6 +272,7 @@ function calculateOptimal() {
     }
 
     displayResults(minCost, bestStates);
+    drawOptimalGraph(bestStates);
 }
 
 function displayResults(cost, states) {
@@ -249,6 +280,7 @@ function displayResults(cost, states) {
     const listA = document.getElementById("allianceA");
     const listB = document.getElementById("allianceB");
     const costOutput = document.getElementById("costOutput");
+    const optimalGraphSection = document.getElementById("optimalGraphSection");
 
     if (!resultsArea || !listA || !listB || !costOutput) {
         return;
@@ -270,5 +302,8 @@ function displayResults(cost, states) {
     }
 
     resultsArea.style.display = "block";
+    if(optimalGraphSection) {
+        optimalGraphSection.style.display = "block";
+    }
 }
 
