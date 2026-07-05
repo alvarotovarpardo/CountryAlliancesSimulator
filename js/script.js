@@ -104,7 +104,7 @@ function randomizeMatrix() {
     
     for (let i = 0; i < countries.length; i++) {
         for (let j = i + 1; j < countries.length; j++) {
-            let val = Math.floor(Math.random() * 11) - 2; //rand between -2 and 2   
+            let val = Math.floor(Math.random() * 5) - 2; //rand between -2 and 2   
             G[i][j] = val;
             G[j][i] = val;
         }
@@ -121,8 +121,9 @@ function uniformMatrix() {
     
     for (let i = 0; i < countries.length; i++) {
         for (let j = i + 1; j < countries.length; j++) {
-            G[i][j] = 1;
-            G[j][i] = 1;
+            let val = Math.random() < 0.5 ? 1 : -1; // random +1 or -1
+            G[i][j] = val;
+            G[j][i] = val;
         }
     }
     updateMatrix();
