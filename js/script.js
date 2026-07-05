@@ -61,9 +61,9 @@ function updateMatrix() {
             if (i === j) {
                 html += `<td class="diagonal-cell">-</td>`;
             } else if (i > j) {
-                html += `<td><input id="g-${i}-${j}" class="matrix-locked" type="number" min="-5" max="5" value="${G[i][j]}" disabled></td>`;
+                html += `<td><input id="g-${i}-${j}" class="matrix-locked" type="number" min="-2" max="2" value="${G[i][j]}" disabled></td>`;
             } else {
-                html += `<td><input id="g-${i}-${j}" type="number" min="-5" max="5" value="${G[i][j]}" 
+                html += `<td><input id="g-${i}-${j}" type="number" min="-2" max="2" value="${G[i][j]}" 
                              onchange="updateG(${i}, ${j}, this.value)"></td>`;
             }
         }
@@ -79,7 +79,7 @@ function updateG(i, j, value){
     }
 
     const parsed = Number(value);
-    const val = Number.isFinite(parsed) ? Math.max(-5, Math.min(5, parsed)) : 0;
+    const val = Number.isFinite(parsed) ? Math.max(-2, Math.min(2, parsed)) : 0;
     G[i][j] = val;
     G[j][i] = val;
 
@@ -104,7 +104,7 @@ function randomizeMatrix() {
     
     for (let i = 0; i < countries.length; i++) {
         for (let j = i + 1; j < countries.length; j++) {
-            let val = Math.floor(Math.random() * 11) - 5; //rand between -5 and 5   
+            let val = Math.floor(Math.random() * 11) - 5; //rand between -2 and 2   
             G[i][j] = val;
             G[j][i] = val;
         }
