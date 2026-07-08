@@ -238,6 +238,94 @@ function calculateCurrentCost() {
     document.getElementById("currentCostDisplay").textContent = cost;
 }
 
+function saveGraphAsPng() {
+    if (countries.length < 1) {
+        alert("Add at least 1 country to export the graph.");
+        return;
+    }
+
+    const size = 400;
+    const cX = 200;
+    const cY = 200;
+    const r = 140;
+
+    const canvas = document.createElement("canvas");
+    const scale = window.devicePixelRatio > 1 ? 2 : 1;
+    canvas.width = size * scale;
+    canvas.height = size * scale;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+        alert("Unable to export graph as PNG.");
+        return;
+    }
+
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = "#fafafa";
+    ctx.fillRect(0, 0, size, size);
+    ctx.strokeStyle = "#ddd";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, size - 1, size - 1);
+
+    const n = countries.length;
+    const positions = [];
+    for (let i = 0; i < n; i++) {
+        const angle = (2 * Math.PI * i) / n;
+        positions.push({
+            x: cX + r * Math.cos(angle),
+            y: cY + r * Math.sin(angle)
+        });
+    }
+
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (G[i][j] === 0) {
+                continue;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(positions[i].x, positions[i].y);
+            ctx.lineTo(positions[j].x, positions[j].y);
+
+            if (G[i][j] > 0) {
+                ctx.setLineDash([]);
+                ctx.strokeStyle = "#2ecc71";
+                ctx.lineWidth = Math.min(G[i][j], 5);
+            } else {
+                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = "#e74c3c";
+                ctx.lineWidth = Math.min(-G[i][j], 5);
+            }
+            ctx.stroke();
+        }
+    }
+
+    for (let i = 0; i < n; i++) {
+        const x = positions[i].x;
+        const y = positions[i].y;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 25, 0, 2 * Math.PI);
+        ctx.fillStyle = currentStates[i] === 1 ? "#ffffff" : "#ffcccc";
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = currentStates[i] === 1 ? "#3498db" : "#e74c3c";
+        ctx.stroke();
+
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 12px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(countries[i].substring(0, 3).toUpperCase(), x, y);
+    }
+
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "alliance-graph.png";
+    link.click();
+}
+
 // Optimization section
 function calculateOptimal() {
     const n = countries.length;
